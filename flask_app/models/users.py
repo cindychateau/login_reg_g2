@@ -20,7 +20,8 @@ class User:
     @classmethod
     def save(cls, formulario):
         query = "INSERT INTO users (first_name, last_name, email, password) VALUES (%(first_name)s, %(last_name)s, %(email)s, %(password)s)"
-        result = connectToMySQL('login_reg_g2').query_db(query, formulario)
+        result = connectToMySQL('login_reg_g2').query_db(query, formulario) #me regresan el nuevo ID de la persona registrada
+        #result = 5
         return result
 
     @staticmethod
@@ -66,3 +67,30 @@ class User:
             es_valido = False
         
         return es_valido
+
+
+    @classmethod
+    def get_by_email(cls, formulario):
+        #formulario = {
+        #      email: elena@cd.com
+        #      password: 123
+        #}
+        query = "SELECT * FROM users WHERE email = %(email)s"
+        result = connectToMySQL('login_reg_g2').query_db(query, formulario) #Los SELECT regresan una lista
+        if len(result) < 1: #NO existe registro con ese correo
+            #result = []
+            return False
+        else:
+            #result = [
+            #    {id: 1, first_name: elena, last_name:de troya.....} -> POSICION 0
+            #]
+            user = cls(result[0])  #User({id: 1, first_name: elena, last_name:de troya.....})
+            return user
+    
+    @classmethod
+    def get_by_id(cls, formulario):
+        #formulario = {id: 4}
+        query = "SELECT * FROM users WHERE id = %(id)s"
+        result = connectToMySQL('login_reg_g2').query_db(query, formulario) #RECIBIMOS UNA LISTA
+        user = cls(result[0]) #creamos una instancia de usuario
+        return user
